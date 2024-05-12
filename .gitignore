@@ -1,0 +1,5 @@
+.idea
+.tessdata
+.venv
+__pycache__
+images
