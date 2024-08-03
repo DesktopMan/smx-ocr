@@ -1,3 +1,27 @@
+from datetime import date, datetime
+
+
+def get_short_title(song):
+    return f"{song['title']} - {song['artist']}"
+
+
+def get_long_title(song):
+    return f"{song['title']}\n{song['subtitle']}\n{song['artist']}" if song['subtitle'] \
+        else f"{song['title']}\n{song['artist']}"
+
+
+def get_song(full_title, songs):
+    for song in songs:
+        if full_title == get_short_title(song) or full_title == get_long_title(song):
+            return song
+
+
+def json_serialize(obj):
+    if isinstance(obj, (date, datetime)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
 async def download_file(session, url, file):
     async with session.get(url) as res:
         if res.status != 200:

@@ -44,27 +44,6 @@ class LatestFrame(threading.Thread):
             time.sleep(0.1)
 
 
-def get_short_title(song):
-    return f"{song['title']} - {song['artist']}"
-
-
-def get_long_title(song):
-    return f"{song['title']}\n{song['subtitle']}\n{song['artist']}" if song['subtitle'] \
-        else f"{song['title']}\n{song['artist']}"
-
-
-def get_song(full_title, songs):
-    for song in songs:
-        if full_title == get_short_title(song) or full_title == get_long_title(song):
-            return song
-
-
-def json_serialize(obj):
-    if isinstance(obj, (datetime, date)):
-        return obj.isoformat()
-    raise TypeError("Type %s not serializable" % type(obj))
-
-
 async def main():
     global running
 
@@ -103,8 +82,8 @@ async def main():
 
     async with session.get(f'{API_URL}/songs') as res:
         songs = await res.json()
-        short_titles = [get_short_title(song) for song in songs]
-        long_titles = [get_long_title(song) for song in songs]
+        short_titles = [utils.get_short_title(song) for song in songs]
+        long_titles = [utils.get_long_title(song) for song in songs]
 
     data = DotMap({
         'screen': None,
@@ -150,7 +129,7 @@ async def main():
                 data.players[p].username = ocr_match(image, RECT_SELECT_SONG_PLAYER, mirror=m)
 
         data.screen = screen if screen else data.screen
-        data.song = get_song(song_title, songs) if song_title else data.song
+        data.song = utils.get_song(song_title, songs) if song_title else data.song
         data.visible = True if screen else False
 
         data_dict = data.toDict()
