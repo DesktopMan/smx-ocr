@@ -8,7 +8,7 @@ import utils
 
 
 # Find text matches in given area, based on valid values
-def ocr_match(frame, rect, values=None, mirror=False, threshold=175, invert=False):
+def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=None):
     rect = utils.mirror_rect(rect) if mirror else rect
 
     best_ratio = 0
@@ -16,7 +16,7 @@ def ocr_match(frame, rect, values=None, mirror=False, threshold=175, invert=Fals
 
     image = frame.crop(rect)
     image = ImageOps.invert(image) if invert else image
-    image = image.point(lambda p: 255 if p > threshold else 0)
+    image = image.point(lambda p: 255 if p > threshold else 0) if threshold else image
 
     with PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path='.tessdata') as api:
         api.SetImage(image)

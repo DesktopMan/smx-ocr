@@ -8,10 +8,10 @@ This tool is for the arcade game StepManiaX. It uses OCR to identify:
 
 # OBS setup
 
-This tool requires a clean gameplay feed at 1080p. You can send this feed from OBS using the virtual camera. Set the
+This tool requires a clean gameplay feed at >= 1080p. You can send this feed from OBS using the virtual camera. Set the
 OBS virtual camera to output your capture source directly, that way it will work even if you change scenes in OBS.
 
-1. Make sure _Settings -> Video ->_ _Base_ and _Output_ resolution is set to 1920x1080
+1. Make sure _Settings -> Video ->_ _Base_ and _Output_ resolution is set to 1920x1080 or higher
 2. Click the cogwheel next to "Start Virtual Camera"
 3. Set _Output Type_ to _Source_
 4. Select your capture device from the list
