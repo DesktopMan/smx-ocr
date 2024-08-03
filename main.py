@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import cv2
 import os
+import imageio.v3 as iio
 import signal
 import sys
 import tempfile
@@ -35,15 +36,12 @@ class LatestFrame(threading.Thread):
     def run(self):
         global running
 
-        cap = cv2.VideoCapture(self.index)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        for index, frame in enumerate(iio.imiter(f'<video{self.index}>')):
+            if not running:
+                return
 
-        while running:
-            ret, self.frame = cap.read()
-
-            if not ret:
-                raise Exception(f'OpenCV failed to read frame')
+            self.frame = frame
+            time.sleep(0.1)
 
 
 def get_short_title(song):
@@ -70,6 +68,23 @@ def json_serialize(obj):
 async def main():
     global running
 
+    latest_frame = LatestFrame(sys.argv[1])
+    time.sleep(1)
+
+    if latest_frame.frame is None:
+        return
+
+    image = Image.fromarray(latest_frame.frame)
+
+    if image.size[0] < 1920 or image.size[1] < 1080:
+        print('Resolutions lower than 1920x1080 are not supported due to bad OCR performance.')
+        print('Adjust your OBS output resolution and try again.')
+        return
+
+    if image.size[0] > 1920 or image.size[1] > 1080:
+        print('Resolutions higher than 1920x1080 will be scaled down before performing OCR.')
+        print('This might affect performance slightly.')
+
     session = aiohttp.ClientSession()
 
     if not os.path.isdir('.tessdata'):
@@ -91,12 +106,6 @@ async def main():
         short_titles = [get_short_title(song) for song in songs]
         long_titles = [get_long_title(song) for song in songs]
 
-    latest_frame = LatestFrame(sys.argv[1])
-    time.sleep(1)
-
-    if latest_frame.frame is None:
-        return
-
     data = DotMap({
         'screen': None,
         'song': None,
@@ -117,6 +126,9 @@ async def main():
             cv2.waitKey(1)
 
         image = Image.fromarray(frame)
+
+        if image.size[0] != 1920 or image.size[1] != 1080:
+            image = image.resize((1920, 1080))
 
         song_title = None
 
