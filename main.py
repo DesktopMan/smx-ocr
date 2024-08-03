@@ -3,6 +3,7 @@ import asyncio
 import cv2
 import os
 import imageio.v3 as iio
+import json
 import signal
 import sys
 import tempfile
@@ -140,6 +141,9 @@ async def main():
             old_data = data_dict
 
             try:
+                with open('data.json', 'w') as f:
+                    f.write(json.dumps(data_dict, indent=2))
+
                 await session.post(f'{API_URL}/machines/{sys.argv[2]}', json=data_dict)
             except Exception as e:
                 print(f'Failed to post data to API. Network issues? Message: {e}')

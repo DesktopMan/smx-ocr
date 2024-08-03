@@ -33,7 +33,7 @@ like a password that identifies your data.
 
 # Using the data
 
-There are two ways to use the OCR data:
+There are three ways to use the OCR data:
 
 1. Use the score browser with the machine in the URL:
     * https://smx.573.no/browser?machine=my-unique-id
@@ -44,3 +44,7 @@ There are two ways to use the OCR data:
     * https://smx.573.no/api/machines/my-unique-id
     * Click the link to see example data
     * TODO: Web socket support for this API endpoint
+
+3. Read the file data.json:
+    * File is updated when the OCR data changes
+    * Same format as the API output, see above
