@@ -134,7 +134,7 @@ async def main():
 
             for p, m in [(0, False), (1, True)]:
                 data.players[p].difficulty = ocr_match(
-                    image, RECT_SELECT_SONG_DIFFICULTY, TEXT_DIFFICULTIES, mirror=m, threshold=220, invert=True).lower()
+                    image, RECT_SELECT_SONG_DIFFICULTY, TEXT_DIFFICULTIES, mirror=m, threshold=220, invert=True)
                 data.players[p].username = ocr_match(image, RECT_SELECT_SONG_PLAYER, mirror=m)
 
         data.screen = screen if screen else data.screen
