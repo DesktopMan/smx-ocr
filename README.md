@@ -15,7 +15,7 @@ OBS virtual camera to output your capture source directly, that way it will work
 
 Note: The tool must be run from Command Prompt or similar.
 
-1. Download latest [release](https://github.com/DesktopMan/smx-ocr/releases)
+1. Download latest tool [release](https://github.com/DesktopMan/smx-ocr/releases)
 
 2. Run the tool with the preview window to find the right webcam id (0 or 1 or 2 ...)  
    `smx-ocr 0 my-unique-id debug`

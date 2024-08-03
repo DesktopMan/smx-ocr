@@ -11,3 +11,5 @@ RECT_SELECT_SONG_PLAYER = (0, 745, 0 + 243, 745 + 34)
 RECT_GAMEPLAY_SONG_TITLE = (586, 11, 586 + 810, 11 + 33)
 
 RECT_HOW_TO_PLAY = (1920 / 2 - 300, 40, 1920 / 2 + 300, 40 + 80)
+
+URL_OCR_DATA = 'https://github.com/tesseract-ocr/tessdata/archive/refs/tags/4.1.0.zip'

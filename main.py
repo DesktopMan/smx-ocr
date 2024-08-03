@@ -1,14 +1,19 @@
 import aiohttp
 import asyncio
 import cv2
+import os
 import signal
 import sys
+import tempfile
 import threading
 import time
+import zipfile
 
 from PIL import Image
 from datetime import datetime, date
 from dotmap import DotMap
+
+import utils
 
 from constants import *
 from ocr import ocr_match
@@ -66,6 +71,20 @@ async def main():
     global running
 
     session = aiohttp.ClientSession()
+
+    if not os.path.isdir('.tessdata'):
+        print('OCR data not found, downloading approximately 1 GB:')
+
+        with tempfile.TemporaryFile() as f:
+            await utils.download_file(session, URL_OCR_DATA, f)
+
+            print('OCR data downloaded. Extracting...')
+
+            with zipfile.ZipFile(f) as z:
+                z.extractall()
+                os.rename('tessdata-4.1.0', '.tessdata')
+
+            print('Done.')
 
     async with session.get(f'{API_URL}/songs') as res:
         songs = await res.json()

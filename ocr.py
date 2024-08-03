@@ -18,7 +18,7 @@ def ocr_match(frame, rect, values=None, mirror=False, threshold=175, invert=Fals
     image = ImageOps.invert(image) if invert else image
     image = image.point(lambda p: 255 if p > threshold else 0)
 
-    with PyTessBaseAPI(psm=PSM.SINGLE_BLOCK) as api:
+    with PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path='.tessdata') as api:
         api.SetImage(image)
         text = api.GetUTF8Text().strip()
         confidences = api.AllWordConfidences()
