@@ -19,17 +19,35 @@ OBS virtual camera to output your capture source directly, that way it will work
 
 # Running the tool
 
-Note: The tool must be run from Command Prompt or similar.
+First download latest tool [release](https://github.com/DesktopMan/smx-ocr/releases).
 
-1. Download latest tool [release](https://github.com/DesktopMan/smx-ocr/releases)
-2. Open a _Command Prompt_ and navigate to the directory with the tool using _cd_
-3. Run the tool with the preview window to find the right webcam id (0 or 1 or 2 ...):  
+Both the two options below require you to come up with a data identifier. The identifier you provide can be anything.
+Think of it like a password that identifies your OCR data for access in the browser or API.
+
+## Option one - run the exe
+
+Running the exe directly will open a window where the tool asks you which webcamera number to use and what your data
+identifier should be. It will then open a preview window of the webcam. If it's not the right webcam just close the
+window and try again with the next webcam number.
+
+Example:
+
+```
+Enter webcam number: 4
+Enter data identifier: my-unique-id
+```
+
+##  Option two - run from command line or script
+
+The tool will run non-interactively if you give it the right parameters. This is useful if you want to start it without
+typing in the answers every time.
+
+1. Run the tool with the preview:  
    `smx-ocr 0 my-unique-id debug`
-4. Run the tool without the preview window:  
+2. Run the tool without the preview window:  
    `smx-ocr 0 my-unique-id`
 
-These examples will post the OCR data to the server as _my-unique-id_. The id you provide can be anything. Think of it
-like a password that identifies your data.
+If you put the command with parameters in a .bat file you can double-click it to run it.
 
 # Using the data
 

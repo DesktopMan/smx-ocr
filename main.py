@@ -45,10 +45,10 @@ class LatestFrame(threading.Thread):
             time.sleep(0.1)
 
 
-async def main():
+async def main(cam_index, identifier, debug):
     global running
 
-    latest_frame = LatestFrame(sys.argv[1])
+    latest_frame = LatestFrame(cam_index)
     time.sleep(1)
 
     if latest_frame.frame is None:
@@ -101,7 +101,7 @@ async def main():
     while running:
         frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2GRAY)
 
-        if len(sys.argv) == 4 and sys.argv[3] == 'debug':
+        if debug:
             cv2.imshow('Capture Preview', frame)
             cv2.waitKey(1)
 
@@ -144,7 +144,7 @@ async def main():
                 with open('data.json', 'w') as f:
                     f.write(json.dumps(data_dict, indent=2))
 
-                await session.post(f'{API_URL}/machines/{sys.argv[2]}', json=data_dict)
+                await session.post(f'{API_URL}/machines/{identifier}', json=data_dict)
             except Exception as e:
                 print(f'Failed to post data to API. Network issues? Message: {e}')
 
@@ -160,11 +160,25 @@ def signal_handler(sig, frame):
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
 
-    if len(sys.argv) not in [3, 4]:
+    camera_index = 0
+    debug = len(sys.argv) == 4 and sys.argv[3] == 'debug'
+
+    if len(sys.argv) == 1:
+        print('-------------------')
+        print('StepManiaX OCR tool')
+        print('-------------------', end='\n\n')
+
+        camera_index = input('Enter webcam number: ')
+        identifier = input('Enter data identifier: ')
+        debug = True
+    elif len(sys.argv) in [3, 4]:
+        camera_index = sys.argv[1]
+        identifier = sys.argv[2]
+    else:
         print('Usage  : python main.py <webcam> <identifier> [debug]')
         print('Example: python main.py 0 example-01')
         sys.exit(0)
 
-    print(f'Your browser URL is: {BROWSER_URL}?machine={sys.argv[2]}')
-    print(f'Your data URL is: {API_URL}/machines/{sys.argv[2]}')
-    asyncio.run(main())
+    print(f'Your browser URL is: {BROWSER_URL}?machine={identifier}')
+    print(f'Your data URL is: {API_URL}/machines/{identifier}')
+    asyncio.run(main(camera_index, identifier, debug))
