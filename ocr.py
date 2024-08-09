@@ -1,3 +1,4 @@
+import os
 import PIL.ImageOps as ImageOps
 import statistics
 
@@ -18,7 +19,7 @@ def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=Non
     image = ImageOps.invert(image) if invert else image
     image = image.point(lambda p: 255 if p > threshold else 0) if threshold else image
 
-    with PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path='.tessdata') as api:
+    with PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path=os.path.expanduser('~/.tessdata')) as api:
         api.SetImage(image)
         text = api.GetUTF8Text().strip()
         confidences = api.AllWordConfidences()

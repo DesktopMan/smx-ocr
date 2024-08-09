@@ -4,6 +4,7 @@ import cv2
 import os
 import imageio.v3 as iio
 import json
+import shutil
 import signal
 import sys
 import tempfile
@@ -67,7 +68,10 @@ async def main(cam_index, identifier, debug):
 
     session = aiohttp.ClientSession()
 
-    if not os.path.isdir('.tessdata'):
+    if os.path.isdir('.tessdata'):
+        shutil.move('.tessdata', os.path.expanduser('~/.tessdata'))
+
+    if not os.path.isdir(os.path.expanduser('~/.tessdata')):
         print('OCR data not found, downloading approximately 1 GB:')
 
         with tempfile.TemporaryFile() as f:
@@ -77,7 +81,7 @@ async def main(cam_index, identifier, debug):
 
             with zipfile.ZipFile(f) as z:
                 z.extractall()
-                os.rename('tessdata-4.1.0', '.tessdata')
+                shutil.move('tessdata-4.1.0', os.path.expanduser('~/.tessdata'))
 
             print('Done.')
 
