@@ -49,13 +49,20 @@ class LatestFrame(threading.Thread):
 async def main(cam_index, identifier, debug):
     global running
 
+    print('Starting frame capture... ', end='')
     latest_frame = LatestFrame(cam_index)
-    time.sleep(1)
+    time.sleep(3)
+    print('Done.')
 
     if latest_frame.frame is None:
+        print('Failed to capture first frame.')
         return
 
     image = Image.fromarray(latest_frame.frame)
+
+    print('Saving preview image to preview.png...')
+    image.save('preview.png')
+    image.show()
 
     if image.size[0] < 1920 or image.size[1] < 1080:
         print('Resolutions lower than 1920x1080 are not supported due to bad OCR performance.')
@@ -101,8 +108,6 @@ async def main(cam_index, identifier, debug):
     })
 
     old_data = None
-
-    image.show()
 
     while running:
         frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2GRAY)
