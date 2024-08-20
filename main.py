@@ -102,6 +102,8 @@ async def main(cam_index, identifier, debug):
 
     old_data = None
 
+    image.show()
+
     while running:
         frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2GRAY)
 
