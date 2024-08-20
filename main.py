@@ -28,8 +28,9 @@ running = True
 
 
 class LatestFrame(threading.Thread):
-    def __init__(self, index):
+    def __init__(self, index, method):
         self.index = int(index)
+        self.method = method
         self.frame = None
         super().__init__()
         # Start thread
@@ -38,27 +39,66 @@ class LatestFrame(threading.Thread):
     def run(self):
         global running
 
-        for index, frame in enumerate(iio.imiter(f'<video{self.index}>')):
-            if not running:
-                return
+        if self.method == 1:
+            print('Reading frames using ffmpeg...')
+            for index, self.frame in enumerate(iio.imiter(f'<video{self.index}>')):
+                if not running:
+                    return
 
-            self.frame = frame
-            time.sleep(0.1)
+                time.sleep(0.1)
+
+        if self.method == 2:
+            print('Opening OpenCV device...')
+            cap = cv2.VideoCapture(self.index)
+
+            print('Setting capture properties...')
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+            print('Reading frames using OpenCV...')
+            while running:
+                _, self.frame = cap.read()
 
 
-async def main(cam_index, identifier, debug):
+async def main():
     global running
 
-    print('Starting frame capture... ', end='')
-    latest_frame = LatestFrame(cam_index)
+    camera_index = 0
+    debug = len(sys.argv) == 4 and sys.argv[3] == 'debug'
+    method = 1
+
+    if len(sys.argv) == 1:
+        print('-------------------')
+        print('StepManiaX OCR tool')
+        print('-------------------', end='\n\n')
+
+        camera_index = input('Enter webcam number: ')
+        identifier = input('Enter data identifier: ')
+        method = int(input('Enter Capture method. 1=ffmpeg (recommended), 2=OpenCV: '))
+        debug = False
+    elif len(sys.argv) in [3, 4]:
+        camera_index = sys.argv[1]
+        identifier = sys.argv[2]
+    else:
+        print('Usage  : python main.py <webcam> <identifier> [debug]')
+        print('Example: python main.py 0 example-01')
+        sys.exit(0)
+
+    print(f'Your browser URL is: {BROWSER_URL}?machine={identifier}')
+    print(f'Your data URL is: {API_URL}/machines/{identifier}')
+
+    print('Starting frame capture...')
+    latest_frame = LatestFrame(camera_index, method)
     time.sleep(3)
-    print('Done.')
 
     if latest_frame.frame is None:
         print('Failed to capture first frame.')
         return
 
-    image = Image.fromarray(latest_frame.frame)
+    print('Got first frame from capture device.')
+
+    frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2RGB) if method == 2 else latest_frame.frame
+    image = Image.fromarray(frame)
 
     print('Saving preview image to preview.png...')
     image.save('preview.png')
@@ -110,7 +150,8 @@ async def main(cam_index, identifier, debug):
     old_data = None
 
     while running:
-        frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2GRAY)
+        frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2RGB) if method == 2 else latest_frame.frame
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
         if debug:
             cv2.imshow('Capture Preview', frame)
@@ -170,26 +211,4 @@ def signal_handler(sig, frame):
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
-
-    camera_index = 0
-    debug = len(sys.argv) == 4 and sys.argv[3] == 'debug'
-
-    if len(sys.argv) == 1:
-        print('-------------------')
-        print('StepManiaX OCR tool')
-        print('-------------------', end='\n\n')
-
-        camera_index = input('Enter webcam number: ')
-        identifier = input('Enter data identifier: ')
-        debug = True
-    elif len(sys.argv) in [3, 4]:
-        camera_index = sys.argv[1]
-        identifier = sys.argv[2]
-    else:
-        print('Usage  : python main.py <webcam> <identifier> [debug]')
-        print('Example: python main.py 0 example-01')
-        sys.exit(0)
-
-    print(f'Your browser URL is: {BROWSER_URL}?machine={identifier}')
-    print(f'Your data URL is: {API_URL}/machines/{identifier}')
-    asyncio.run(main(camera_index, identifier, debug))
+    asyncio.run(main())
