@@ -23,7 +23,7 @@ def json_serialize(obj):
 
 
 async def download_file(session, url, file):
-    async with session.get(url) as res:
+    async with session.get(url, ssl=False) as res:
         if res.status != 200:
             print('Failed to download OCR data. Try again?')
             return False
