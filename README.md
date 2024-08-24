@@ -35,6 +35,7 @@ Example:
 ```
 Enter webcam number: 4
 Enter data identifier: my-unique-id
+Enter Capture method. 1=ffmpeg (recommended), 2=OpenCV (older hw): 1
 ```
 
 ##  Option two - run from command line or script
@@ -42,12 +43,9 @@ Enter data identifier: my-unique-id
 The tool will run non-interactively if you give it the right parameters. This is useful if you want to start it without
 typing in the answers every time.
 
-1. Run the tool with the preview:  
-   `smx-ocr 0 my-unique-id debug`
-2. Run the tool without the preview window:  
-   `smx-ocr 0 my-unique-id`
+`smx-ocr 0 my-unique-id`
 
-If you put the command with parameters in a .bat file you can double-click it to run it.
+If you put the command with parameters in a .bat file you can double-click it to run it, or have it run on startup.
 
 # Using the data
 
@@ -55,14 +53,15 @@ There are three ways to use the OCR data:
 
 1. Use the score browser with the machine in the URL:
     * https://smx.573.no/browser?machine=my-unique-id
-    * The browser will auto refresh and change songs as you navigate the song selection wheel.
-    * You can use this URL as a browser source in OBS for overlays.
+    * The browser will auto refresh and change songs as you navigate the song selection wheel
+    * Add additional filters in the browser, e.g. user and difficulty, as needed
+    * You can use this URL as a browser source in OBS for overlays
 
 2. Use the data in your own application with the API:
     * https://smx.573.no/api/machines/my-unique-id
     * Click the link to see example data
-    * TODO: Web socket support for this API endpoint
+    * This endpoint supports websockets
 
 3. Read the file data.json:
     * File is updated when the OCR data changes
-    * Same format as the API output, see above
+    * Same format as the API output without , see above

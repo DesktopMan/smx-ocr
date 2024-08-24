@@ -74,7 +74,7 @@ async def main():
 
         camera_index = input('Enter webcam number: ')
         identifier = input('Enter data identifier: ')
-        method = int(input('Enter Capture method. 1=ffmpeg (recommended), 2=OpenCV: '))
+        method = int(input('Enter Capture method. 1=ffmpeg (recommended), 2=OpenCV (older hw): '))
         debug = False
     elif len(sys.argv) in [3, 4]:
         camera_index = sys.argv[1]
