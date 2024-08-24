@@ -24,6 +24,7 @@ pywin32-ctypes==0.2.2
 scikit-image==0.24.0
 scipy==1.14.0
 setuptools==72.1.0
-tesserocr @ https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.7.0-tesseract-5.3.4/tesserocr-2.7.0-cp312-cp312-win_amd64.whl#sha256=93341971973e1bcf3ab1aa57f083b7298d77af1e3426a78bfd41a35abf22523c
+tesserocr==2.7.0 ; sys_platform == 'linux'
+tesserocr @ https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.7.0-tesseract-5.3.4/tesserocr-2.7.0-cp312-cp312-win_amd64.whl#sha256=93341971973e1bcf3ab1aa57f083b7298d77af1e3426a78bfd41a35abf22523c ; sys_platform == 'win32'
 tifffile==2024.7.24
 yarl==1.9.4
