@@ -13,7 +13,7 @@ import time
 import zipfile
 
 from PIL import Image
-from datetime import datetime, date
+from datetime import datetime
 from dotmap import DotMap
 
 import utils
@@ -150,6 +150,8 @@ async def main():
     old_data = None
 
     while running:
+        now = time.perf_counter()
+
         frame = cv2.cvtColor(latest_frame.frame, cv2.COLOR_BGR2RGB) if method == 2 else latest_frame.frame
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
@@ -199,6 +201,14 @@ async def main():
                 await session.post(f'{API_URL}/machines/{identifier}', json=data_dict)
             except Exception as e:
                 print(f'Failed to post data to API. Network issues? Message: {e}')
+
+        delta_time = time.perf_counter() - now
+        # print(f'FPS: {1 / delta_time}')
+
+        sleep_time = 0.1 - delta_time
+
+        if sleep_time > 0:
+            await asyncio.sleep(sleep_time)
 
     await session.close()
 

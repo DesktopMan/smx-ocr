@@ -7,6 +7,8 @@ from tesserocr import PyTessBaseAPI, PSM
 
 import utils
 
+api = PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path=os.path.expanduser('~/.tessdata'))
+
 
 # Find text matches in given area, based on valid values
 def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=None):
@@ -19,10 +21,9 @@ def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=Non
     image = ImageOps.invert(image) if invert else image
     image = image.point(lambda p: 255 if p > threshold else 0) if threshold else image
 
-    with PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path=os.path.expanduser('~/.tessdata')) as api:
-        api.SetImage(image)
-        text = api.GetUTF8Text().strip()
-        confidences = api.AllWordConfidences()
+    api.SetImage(image)
+    text = api.GetUTF8Text().strip()
+    confidences = api.AllWordConfidences()
 
     if not confidences or statistics.mean(confidences) < 50:
         return None

@@ -64,4 +64,4 @@ There are three ways to use the OCR data:
 
 3. Read the file data.json:
     * File is updated when the OCR data changes
-    * Same format as the API output without , see above
+    * Same format as the API output without user details, see above
