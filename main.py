@@ -1,16 +1,12 @@
 import aiohttp
 import asyncio
 import cv2
-import os
 import imageio.v3 as iio
 import json
-import shutil
 import signal
 import sys
-import tempfile
 import threading
 import time
-import zipfile
 
 from PIL import Image
 from datetime import datetime
@@ -63,15 +59,17 @@ class LatestFrame(threading.Thread):
 async def main():
     global running
 
+    print('-------------------')
+    print('StepManiaX OCR tool')
+    print('-------------------', end='\n\n')
+
+    await utils.check_ocr_data()
+
     camera_index = 0
     debug = len(sys.argv) == 4 and sys.argv[3] == 'debug'
     method = 1
 
     if len(sys.argv) == 1:
-        print('-------------------')
-        print('StepManiaX OCR tool')
-        print('-------------------', end='\n\n')
-
         camera_index = input('Enter webcam number: ')
         identifier = input('Enter data identifier: ')
         method = int(input('Enter Capture method. 1=ffmpeg (recommended), 2=OpenCV (older hw): '))
@@ -114,23 +112,6 @@ async def main():
         print('This might affect performance slightly.')
 
     session = aiohttp.ClientSession()
-
-    if os.path.isdir('.tessdata'):
-        shutil.move('.tessdata', os.path.expanduser('~/.tessdata'))
-
-    if not os.path.isdir(os.path.expanduser('~/.tessdata')):
-        print('OCR data not found, downloading approximately 1 GB:')
-
-        with tempfile.TemporaryFile() as f:
-            await utils.download_file(session, URL_OCR_DATA, f)
-
-            print('OCR data downloaded. Extracting...')
-
-            with zipfile.ZipFile(f) as z:
-                z.extractall()
-                shutil.move('tessdata-4.1.0', os.path.expanduser('~/.tessdata'))
-
-            print('Done.')
 
     async with session.get(f'{API_URL}/songs') as res:
         songs = await res.json()

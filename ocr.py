@@ -7,11 +7,16 @@ from tesserocr import PyTessBaseAPI, PSM
 
 import utils
 
-api = PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path=os.path.expanduser('~/.tessdata'))
+api = None
 
 
 # Find text matches in given area, based on valid values
 def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=None):
+    global api
+
+    if api is None:
+        api = PyTessBaseAPI(psm=PSM.SINGLE_BLOCK, path=os.path.expanduser('~/.tessdata'))
+
     rect = utils.mirror_rect(rect) if mirror else rect
 
     best_ratio = 0

@@ -1,3 +1,11 @@
+import aiohttp
+import os
+import shutil
+import tempfile
+import zipfile
+
+from constants import URL_OCR_DATA
+
 from datetime import date, datetime
 
 
@@ -45,6 +53,29 @@ async def download_file(session, url, file):
 
             if chunk_num % 1000 == 0:
                 print()
+
+
+async def check_ocr_data():
+    if os.path.isdir('.tessdata'):
+        shutil.move('.tessdata', os.path.expanduser('~/.tessdata'))
+
+    if not os.path.isdir(os.path.expanduser('~/.tessdata')):
+        print('OCR data not found, downloading approximately 1 GB:')
+
+        session = aiohttp.ClientSession()
+
+        with tempfile.TemporaryFile() as f:
+            await download_file(session, URL_OCR_DATA, f)
+
+            print('OCR data downloaded. Extracting...')
+
+            with zipfile.ZipFile(f) as z:
+                z.extractall()
+                shutil.move('tessdata-4.1.0', os.path.expanduser('~/.tessdata'))
+
+            print('Done.')
+
+        await session.close()
 
 
 def mirror_rect(rect):
