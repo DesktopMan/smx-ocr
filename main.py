@@ -82,7 +82,8 @@ async def main():
         print('Example: python main.py 0 example-01')
         sys.exit(0)
 
-    print(f'Your browser URL is: {BROWSER_URL}?machine={identifier}')
+    print(f'Your browser URL with auto song selection: {BROWSER_URL}?machine={identifier}')
+    print(f'Your browser URL with auto song/user/difficulty selection: {BROWSER_URL}?machine={identifier}&auto_user=1&auto_difficulty=1')
     print(f'Your data URL is: {API_URL}/machines/{identifier}')
 
     print('Starting frame capture...')
