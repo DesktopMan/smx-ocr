@@ -11,7 +11,7 @@ api = None
 
 
 # Find text matches in given area, based on valid values
-def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=None):
+def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=None, min_length=0):
     global api
 
     if api is None:
@@ -30,7 +30,7 @@ def ocr_match(frame, rect, values=None, mirror=False, invert=True, threshold=Non
     text = api.GetUTF8Text().strip()
     confidences = api.AllWordConfidences()
 
-    if not confidences or statistics.mean(confidences) < 50:
+    if len(text) < min_length or not confidences or statistics.mean(confidences) < 50:
         return None
 
     if not values:
